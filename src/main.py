@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
-
+import os
 app = FastAPI()
 
 
@@ -10,4 +10,5 @@ def hello():
 
 
 if __name__ == "__main__":
+    port = int(os.getenv("PORT", 8080))
     uvicorn.run(app)
