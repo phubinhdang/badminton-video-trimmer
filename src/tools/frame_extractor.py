@@ -3,9 +3,10 @@ import os
 from pathlib import Path
 
 import ffpb
-from tqdm import tqdm
+import streamlit
+from tools.youtube_downloader import VideoInfo
 
-from src.tools.youtube_downloader import VideoInfo
+from util.persistent_stqdm import PersistentSTQDM
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,8 @@ class FrameExtractor:
             video_img_dir.mkdir(parents=True, exist_ok=True)
         argv = ["-i", f"{video.video_path}", "-filter:v", f"fps=fps={self.fps}", f"{video_img_dir}/img_%07d.jpg"]
         try:
-            ffpb.main(argv=argv, tqdm=tqdm)
+            streamlit.text("Extracting frames from video")
+            ffpb.main(argv=argv, tqdm=PersistentSTQDM)
             logger.info(f"Finished extracting frames to {video_img_dir}")
         except Exception as e:
             logger.error(f"Command ffmpeg {' '.join(argv)} caused error {e}")
