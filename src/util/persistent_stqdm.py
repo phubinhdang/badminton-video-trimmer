@@ -8,6 +8,3 @@ class PersistentSTQDM(stqdm):
 
     def st_clear(self):
         pass
-
-    def close(self):
-        super().close()
