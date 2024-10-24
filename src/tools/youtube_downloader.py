@@ -1,11 +1,9 @@
 import logging
-import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
 
 from pytubefix import YouTube
-
 from util.persistent_stqdm import PersistentSTQDM
 
 logger = logging.getLogger(__name__)
