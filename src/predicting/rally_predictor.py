@@ -7,17 +7,15 @@ import numpy as np
 import torch
 from datasets.tad_dataset import build_dataset
 from easydict import EasyDict
-from stqdm import stqdm
-
 from models import build_model
+from predicting.segment_merger import SegmentMerger
 from tools.youtube_downloader import VideoInfo
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.sampler import SequentialSampler
 from util.misc import collate_fn
-
 from util.video_util import get_video_duration_in_seconds, get_fps, get_num_frames
 
-from predicting.segment_merger import SegmentMerger
+from util.persistent_stqdm import PersistentSTQDM
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +116,7 @@ class RallyPredictor:
         segment_merger = SegmentMerger(base_ds)
 
         cnt = 0
-        for samples, targets in stqdm(data_loader, total=len(data_loader)):
+        for samples, targets in PersistentSTQDM(data_loader, total=len(data_loader)):
             samples = samples.to(self.device)
             outputs = self.model((samples.tensors, samples.mask))
 
@@ -137,6 +135,6 @@ class RallyPredictor:
         output_dir = Path().cwd() / "data" / f"{video_info.title}" / "output"
         if not output_dir.exists():
             output_dir.mkdir(parents=True, exist_ok=True)
-        output_path = output_dir / "inference_detection.csv"
+        output_path = output_dir / "raw_detection.csv"
         segment_merger.dump_detection_to_json(output_path)
         logger.info("Wrote inference result to ", output_path)
