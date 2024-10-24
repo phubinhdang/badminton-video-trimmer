@@ -21,10 +21,6 @@ class VideoInfo:
 
 class YoutubeDownloader:
     def __init__(self, show_progress_in_backend=True, video_only=False):
-        user_home_dir = os.path.expanduser("~")
-        self.download_dir = Path(user_home_dir) / "tad" / "downloads"
-        if not self.download_dir.exists():
-            self.download_dir.mkdir(parents=True, exist_ok=True)
         self.show_progress_in_backend = show_progress_in_backend
         self.streamlit_tqdm = None
         self.video_only = video_only
@@ -61,13 +57,12 @@ class YoutubeDownloader:
     def download_audio(self, yt: YouTube, title: str) -> str:
         try:
             audio_stream = yt.streams.filter(progressive=True).first()
-            audio_file_name = f"{title}_audio.mp3"
-            # Create a Streamlit progress bar widget
+            download_path = Path.cwd() / "data" / f"{title}" / "input"
+            download_path.mkdir(parents=True, exist_ok=True)
             self.streamlit_tqdm = PersistentSTQDM(total=audio_stream.filesize, unit="B", unit_scale=True,
                                                   desc="Downloading AUDIO",
                                                   backend=self.show_progress_in_backend)
-
-            audio_file_path = audio_stream.download(output_path=str(self.download_dir), filename=audio_file_name,
+            audio_file_path = audio_stream.download(output_path=str(download_path), filename="audio.mp3",
                                                     skip_existing=False)
             if not audio_file_path:
                 raise Exception()
@@ -90,13 +85,14 @@ class YoutubeDownloader:
             elif not available_resolutions:
                 res = available_resolutions[0]
             video_stream = yt.streams.filter(resolution=res, progressive=False).first()
-            video_file_name = f"{title}.mp4"
             # Create a Streamlit progress bar widget
+            download_path = Path.cwd() / "data" / f"{title}" / "input"
+            download_path.mkdir(parents=True, exist_ok=True)
             logger.info(f"Started downloading video with resolution of {res}")
             self.streamlit_tqdm = PersistentSTQDM(total=video_stream.filesize, unit="B", unit_scale=True,
                                                   desc="Downloading VIDEO",
                                                   backend=self.show_progress_in_backend)
-            video_file_path = video_stream.download(output_path=str(self.download_dir), filename=video_file_name,
+            video_file_path = video_stream.download(output_path=str(download_path), filename="video.mp4",
                                                     skip_existing=False)
             if not video_file_path:
                 raise Exception()
