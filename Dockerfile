@@ -1,19 +1,23 @@
-# Refer to: https://github.com/RGGH/Sentiment-Analysis-Flask-API/blob/master/Dockerfile
-# Use the official lightweight Python image.
-# https://hub.docker.com/_/python
+# refer to https://docs.streamlit.io/deploy/tutorials/docker
 FROM python:3.8-slim
 
-# Allow statements and log messages to immediately appear in the Knative logs
-ENV PYTHONUNBUFFERED True
+WORKDIR /app
 
-# Copy local code to the container image.
-ENV APP_HOME /app
-WORKDIR $APP_HOME
-COPY . ./
-RUN pip install --no-cache-dir -r requirements.txt
-# Run the web service on container startup. Here we use the uvicorn
-# webserver, with one worker process and 8 threads.
-# For environments with multiple CPU cores, increase the number of workers
-# to be equal to the cores available.
-# Timeout is set to 0 to disable the timeouts of the workers to allow Cloud Run to handle instance scaling.
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    software-properties-common \
+    libgl1 \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+
+COPY . . 
+
+RUN pip3 install -r requirements.txt
+
+EXPOSE 8501
+
+HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+
+ENTRYPOINT ["streamlit", "run", "src/main.py", "--server.port=8501", "--server.address=0.0.0.0"]
