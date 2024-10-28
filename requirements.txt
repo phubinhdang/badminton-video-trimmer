@@ -21,3 +21,6 @@ einops==0.8.0
 scipy==1.10.1
 pandas==2.0.3
 opencv-python==4.10.0.84
+h5py==3.11.0
+moviepy==1.0.3
+pytubefix==8.1.1
