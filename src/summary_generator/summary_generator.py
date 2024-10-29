@@ -59,7 +59,7 @@ class SummaryGenerator:
         # Close all the clips
         for clip in video_clips:
             clip.close()
-        logger.info("Finished combining clips to summary video")
+        logger.info(f"Finished combining clips to summary video: {output_video}")
         return output_video
 
     def ss_to_hhmmss(self, seconds):
