@@ -134,4 +134,4 @@ class RallyPredictor:
             output_dir.mkdir(parents=True, exist_ok=True)
         output_path = output_dir / "raw_detection.csv"
         segment_merger.dump_detection_to_json(output_path)
-        logger.info("Wrote inference result to ", output_path)
+        logger.info(f"Wrote inference result to {output_path}")
