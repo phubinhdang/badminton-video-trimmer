@@ -34,7 +34,9 @@ def trim_video(video_url: str):
 
     st.sidebar.markdown("### Generating Summary Video (Step 5/5)")
     video_path = generator.combine_clips(video_info.title, subclip_paths)
-    st.video(video_path)
+    with open(video_path, "rb") as f:
+        video_bytes = f.read()
+        st.video(video_bytes)
     show_video_download_button(video_path)
     df = pd.read_csv(clips_csv_path)
     # Display first few lines of the CSV file
