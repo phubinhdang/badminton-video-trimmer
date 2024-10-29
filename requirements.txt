@@ -1,6 +1,5 @@
--f https://download.pytorch.org/whl/torch_stable.html
-torch==1.9.0+cu111
-torchvision==0.10.0+cu111
+torch==2.4.1
+torchvision==0.19.1
 annotated-types==0.7.0
 anyio==4.5.2
 click==8.1.7
