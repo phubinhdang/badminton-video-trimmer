@@ -1,4 +1,6 @@
 import logging
+import tempfile
+from pathlib import Path
 
 import pandas as pd
 import streamlit as st
@@ -6,17 +8,35 @@ import streamlit as st
 from predicting.rally_predictor import RallyPredictor
 from summary_generator.summary_generator import SummaryGenerator
 from tools.frame_extractor import FrameExtractor
-from tools.youtube_downloader import YoutubeDownloader
-from tools.youtube_downloader import logger
+from tools.youtube_downloader import YoutubeDownloader, VideoInfo
 
 APP_LOGGING_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=APP_LOGGING_FORMAT, level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 youtube_downloader = YoutubeDownloader()
 frame_extractor = FrameExtractor()
 predictor = RallyPredictor()
 generator = SummaryGenerator()
 
+chunk_size = 5 * 1024 * 1024  # 5 MB per chunk
+def get_video_chunk(file_path, start, end):
+    """Retrieve a segment of the video file from start to end bytes."""
+    with open(file_path, 'rb') as f:
+        f.seek(start)
+        return f.read(end - start)
+
+def stream_video_to_temp_file(file_path, chunk_size=2**20):
+    """Write video file chunks to a temporary file and return the temp file path."""
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
+    with open(temp_file.name, 'wb') as temp_video:
+        file_size = Path(file_path).stat().st_size
+        start = 0
+        while start < file_size:
+            end = min(start + chunk_size, file_size)
+            temp_video.write(get_video_chunk(file_path, start, end))
+            start = end
+    return temp_file.name
 
 def trim_video(video_url: str):
     st.sidebar.markdown("### Downloading Video (Step 1/5)")
@@ -34,10 +54,10 @@ def trim_video(video_url: str):
 
     st.sidebar.markdown("### Generating Summary Video (Step 5/5)")
     video_path = generator.combine_clips(video_info.title, subclip_paths)
-    with open(video_path, "rb") as f:
-        video_bytes = f.read()
-        st.video(video_bytes)
-    show_video_download_button(video_path)
+    temp_video_path = stream_video_to_temp_file(video_path, chunk_size)
+    st.video(temp_video_path)
+    # show_video_download_button(video_path)
+
     df = pd.read_csv(clips_csv_path)
     # Display first few lines of the CSV file
     st.write("Preview of the predicted rallies:")
