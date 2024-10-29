@@ -115,7 +115,7 @@ class RallyPredictor:
         self.model.eval()
         segment_merger = SegmentMerger(base_ds)
 
-        cnt = 0
+        logger.info(f"Predicting rallies for video {video_info.video_path}")
         for samples, targets in PersistentSTQDM(data_loader, total=len(data_loader)):
             samples = samples.to(self.device)
             outputs = self.model((samples.tensors, samples.mask))
@@ -129,9 +129,6 @@ class RallyPredictor:
             res = {target["video_id"]: output for target, output in zip(targets, results)}
             if segment_merger is not None:
                 segment_merger.update(res)
-            if cnt > 5:
-                break
-            cnt += 1
         output_dir = Path().cwd() / "data" / f"{video_info.title}" / "output"
         if not output_dir.exists():
             output_dir.mkdir(parents=True, exist_ok=True)

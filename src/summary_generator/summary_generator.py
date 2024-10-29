@@ -31,6 +31,7 @@ class SummaryGenerator:
             output_video = f"{subclip_dir}/{i}.mp4"
             self.extract_clip(input_video, s, e, output_video)
             subclip_paths.append(output_video)
+        logger.info("Finished extracting subclips")
         return subclip_paths
 
     def extract_clip(self, input_video, start_time, end_time, output_video):
@@ -52,12 +53,13 @@ class SummaryGenerator:
 
         # Write the final video to an output file
         output_video = str(Path().cwd() / "data" / video_title / "output" / "summary.mp4")
-        logger = MoviepyBarLogger(PersistentSTQDM(), time.time())
-        final_clip.write_videofile(output_video, codec="libx264", logger=logger)
+        moviepy_bar_logger = MoviepyBarLogger(PersistentSTQDM(), time.time())
+        final_clip.write_videofile(output_video, codec="libx264", logger=moviepy_bar_logger)
 
         # Close all the clips
         for clip in video_clips:
             clip.close()
+        logger.info("Finished combining clips to summary video")
         return output_video
 
     def ss_to_hhmmss(self, seconds):
@@ -85,7 +87,7 @@ class SummaryGenerator:
         df.reset_index(inplace=True)
 
         # keep only rallies with scores > threshold
-        logger.info(f"Use score threshold = {score_threshold}")
+        logger.info(f"Use score threshold = {score_threshold} to filter raw rally detections")
         df = df[df['score'] > score_threshold]
         if len(df) == 0:
             raise ValueError("No detections found after clipping and filtering")
@@ -95,6 +97,7 @@ class SummaryGenerator:
         current_start = df['start'].values[0]
         current_end = df['end'].values[0]
         # Iterate through the DataFrame rows
+        logger.info(f"Merging overlapping raw rally detections in {raw_detection_path}")
         for i in range(1, len(df)):
             row_start = df.iloc[i]['start']
             row_end = df.iloc[i]['end']
