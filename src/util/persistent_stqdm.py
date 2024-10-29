@@ -37,7 +37,7 @@ class PersistentSTQDM(tqdm):  # pylint: disable=invalid-name
             colour=None,
             gui=False,
             st_container=None,
-            backend=False,
+            backend=True,
             frontend=True,
             **kwargs,
     ):  # pylint: disable=too-many-arguments,too-many-locals
