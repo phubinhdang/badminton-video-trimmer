@@ -7,6 +7,7 @@ import numpy as np
 import torch
 from datasets.tad_dataset import build_dataset
 from easydict import EasyDict
+from huggingface_hub import hf_hub_download
 from models import build_model
 from predicting.segment_merger import SegmentMerger
 from tools.youtube_downloader import VideoInfo
@@ -81,8 +82,8 @@ class RallyPredictor:
         model, postprocessors = build_model(cfg)
         model.backbone.backbone.load_pretrained_weight(cfg.pretrained_model)
         model.to(self.device)
-        best_checkpoint = Path().cwd() / "checkpoints" / "model_best.pth"
-        checkpoint = torch.load(best_checkpoint, map_location="cpu")
+        checkpoint_path = hf_hub_download(repo_id="phubinhdang/badminton-video-trimmer", filename="model_best.pth")
+        checkpoint = torch.load(checkpoint_path, map_location="cpu")
         model.load_state_dict(checkpoint["model"], strict=False)
         n_parameters = sum(p.numel() for p in model.parameters())
         logger.info("number of params: {}".format(n_parameters))
