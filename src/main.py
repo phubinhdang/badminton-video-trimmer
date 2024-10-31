@@ -17,6 +17,8 @@ frame_extractor = FrameExtractor()
 predictor = RallyPredictor()
 generator = SummaryGenerator()
 
+logger = logging.getLogger(__name__)
+
 
 def trim_video(video_url: str):
     st.sidebar.markdown("### Downloading Video (Step 1/5)")
