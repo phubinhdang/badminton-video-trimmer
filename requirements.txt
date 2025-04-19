@@ -21,5 +21,5 @@ pandas==2.0.3
 opencv-python==4.10.0.84
 h5py==3.11.0
 moviepy==1.0.3
-pytubefix==8.1.1
+pytubefix==8.12.3
 huggingface-hub==0.26.2
