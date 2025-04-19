@@ -102,21 +102,21 @@ This demo is playing at 2x speed.
     * Check if `ffmpeg` is installed on your machine with `ffmpeg --version`. The command should output something like
       `ffmpeg version 4.4.2-0ubuntu0.22.04.1+esm5 Copyright (c) 2000-2021 the FFmpeg developers  built with gcc 11 (Ubuntu 11.4.0-1ubuntu1~22.04)`
 
+### Installation
 * [**Conda**](https://docs.anaconda.com/miniconda/) for creating python virual environment
   ```sh
   conda create --name trimmer python=3.8
   conda activate trimmer
+  pip install -r requirments.txt
+  ```
+* Or [**uv**](https://github.com/astral-sh/uv) for creating python virual environment
+  ```sh
+  uv venv --python 3.8
+  uv pip install -r requirements.txt
+  source .venv/bin/activate
   ```
 
-### Installation
-
-1. Install python packages
-
-```sh
-pip install -r requirments.txt
-```
-
-2. Run the streamlit app
+### Run the streamlit app
 
 ```sh
 streamlit run src/main.py  
