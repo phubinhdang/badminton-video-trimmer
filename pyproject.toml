@@ -1,7 +1,3 @@
-# consulted https://github.com/pypa/sampleproject/blob/main/pyproject.toml
-[build-system]
-requires = ["setuptools", "wheel", "pip"] 
-build-backend = "setuptools.build_meta"
 [project]
 name = "badminton-video-trimmer"
 version = "0.1.0"
