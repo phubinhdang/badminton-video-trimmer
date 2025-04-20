@@ -23,11 +23,10 @@ WORKDIR /app
 COPY . . 
 
 RUN uv venv --python 3.8
-RUN uv sync --extra cpu
-RUN source .venv/bin/activate
+RUN uv clean && uv sync --extra cpu
 EXPOSE 8501
 
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
 # refer to https://docs.streamlit.io/deploy/tutorials/docker
-ENTRYPOINT ["streamlit", "run", "src/main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+ENTRYPOINT ["uv", "run", "streamlit", "run", "src/main.py", "--server.port=8501", "--server.address=0.0.0.0"]
