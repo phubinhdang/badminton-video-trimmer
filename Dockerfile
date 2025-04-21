@@ -23,7 +23,7 @@ WORKDIR /app
 COPY . . 
 
 RUN uv venv --python 3.8
-RUN uv clean && uv sync --extra cpu
+RUN uv clean && uv sync --extra cu121
 EXPOSE 8501
 
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
