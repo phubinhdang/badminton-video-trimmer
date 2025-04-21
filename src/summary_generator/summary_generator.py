@@ -90,7 +90,7 @@ class SummaryGenerator:
         logger.info(f"Use score threshold = {score_threshold} to filter raw rally detections")
         df = df[df['score'] > score_threshold]
         if len(df) == 0:
-            raise ValueError("No detections found after clipping and filtering")
+            raise ValueError("No rally is detected. The input video may not contain a badminton match.")
 
         # merge overlapping intervals
         merged_intervals = []
