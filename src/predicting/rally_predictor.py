@@ -107,7 +107,7 @@ class RallyPredictor:
             sampler=sampler_val,
             drop_last=False,
             collate_fn=collate_fn,
-            num_workers=2,  # fixme
+            num_workers=self.cfg.num_workers,
             pin_memory=False,
         )
         base_ds = dataset_val.video_dict
