@@ -1,13 +1,14 @@
 [project]
 name = "badminton-video-trimmer"
 version = "0.1.0"
-description = "Add your description here"
+description = "A web tool for rally-wise badminton video trimming"
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
     "annotated-types==0.7.0",
     "anyio==4.5.2",
     "click==8.1.7",
+    "dotenv>=0.9.9",
     "easydict==1.13",
     "einops==0.8.0",
     "exceptiongroup==1.2.2",
