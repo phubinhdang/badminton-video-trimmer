@@ -5,10 +5,13 @@
 
 
 import argparse
+import os
 from easydict import EasyDict
 import yaml
+from dotenv import load_dotenv
 
-
+# override=True is need for local dev, see https://stackoverflow.com/questions/64734118/environment-variable-not-loading-with-load-dotenv-in-linux
+load_dotenv(override=True)
 
 def str2bool(x):
     if x.lower() in ['true', 't', '1', 'y']:
@@ -21,7 +24,6 @@ def get_args_parser():
     parser = argparse.ArgumentParser('TadTR', add_help=False)
 
     parser.add_argument('--cfg', type=str, help='the config file to use')
-
     parser.add_argument('--device', default='cuda',
                         help='device to use for training / testing')
     parser.add_argument('--seed', default=42, type=int)
@@ -52,10 +54,11 @@ cfg = EasyDict()
 # whether to enable tensorboard
 cfg.tensorboard = True
 # Disable CUDA extensions so that we can run the model on CPU
-cfg.disable_cuda = True
+cfg.disable_cuda = str2bool(os.getenv("DISABLE_CUDA", "True"))
+cfg.device = "cpu" if cfg.disable_cuda else "cuda"
 # The backend of deformable attention, pytorch or CUDA
 cfg.dfm_att_backend = 'pytorch'
-
+cfg.num_workers = 2
 # path where to save, empty for no saving
 cfg.output_dir = ''
 

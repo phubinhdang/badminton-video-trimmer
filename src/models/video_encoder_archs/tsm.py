@@ -1,5 +1,5 @@
 # Mostly copied from the official repo of TSM paper https://github.com/mit-han-lab/temporal-shift-module/blob/master/ops/models.py
-
+from configs.opts import cfg
 import sys
 import os
 import logging
@@ -13,7 +13,6 @@ import torchvision
 
 dirname = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(dirname, '..'))
-from configs.opts import cfg
 
 
 # this variable is helpful for recover the video sequence from batched images
@@ -228,7 +227,7 @@ class TSM(nn.Module):
 
         if ckpt_path.startswith('http'):
             checkpoint = torch.hub.load_state_dict_from_url(
-                ckpt_path, map_location='cpu', check_hash=True)
+                ckpt_path, map_location=cfg.device, check_hash=True)
         else:
             checkpoint = torch.load(ckpt_path)
         checkpoint = checkpoint['state_dict']

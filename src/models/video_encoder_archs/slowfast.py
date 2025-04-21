@@ -7,7 +7,7 @@ from torch.nn.modules.batchnorm import _BatchNorm
 import logging
 
 from .resnet3d import ConvModule, kaiming_init, ResNet3d
-
+from configs.opts import cfg
 
 
 class ResNet3dPathway(ResNet3d):
@@ -479,7 +479,7 @@ class ResNet3dSlowFast(nn.Module):
 
         if ckpt_path.startswith('http'):
             checkpoint = torch.hub.load_state_dict_from_url(
-                ckpt_path, map_location='cpu', check_hash=True)
+                ckpt_path, map_location=cfg.device, check_hash=True)
         else:
             checkpoint = torch.load(ckpt_path)
         state_dict = checkpoint['state_dict']

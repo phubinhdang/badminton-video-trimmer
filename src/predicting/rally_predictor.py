@@ -75,15 +75,14 @@ def create_anno_file(video_info: VideoInfo, origin_fps, duration_in_seconds):
 class RallyPredictor:
     def __init__(self):
         self.cfg = read_config_and_fix_randomness()
-        self.device = torch.device("cpu")
         self.model, self.postprocessors = self.load_model_and_postprocessors(self.cfg)
 
     def load_model_and_postprocessors(self, cfg: EasyDict):
         model, postprocessors = build_model(cfg)
         model.backbone.backbone.load_pretrained_weight(cfg.pretrained_model)
-        model.to(self.device)
+        model.to(self.cfg.device)
         checkpoint_path = hf_hub_download(repo_id="phubinhdang/badminton-video-trimmer", filename="model_best.pth")
-        checkpoint = torch.load(checkpoint_path, map_location="cpu")
+        checkpoint = torch.load(checkpoint_path, map_location=self.cfg.device)
         model.load_state_dict(checkpoint["model"], strict=False)
         n_parameters = sum(p.numel() for p in model.parameters())
         logger.info("number of params: {}".format(n_parameters))
@@ -118,12 +117,12 @@ class RallyPredictor:
 
         logger.info(f"Predicting rallies for video {video_info.video_path}")
         for samples, targets in PersistentSTQDM(data_loader, total=len(data_loader)):
-            samples = samples.to(self.device)
+            samples = samples.to(self.cfg.device)
             outputs = self.model((samples.tensors, samples.mask))
 
             # raw_res.append((outputs, targets))
             video_duration = torch.FloatTensor([t["video_duration"] for t in targets]).to(
-                self.device
+                self.cfg.device
             )
             results = self.postprocessors(outputs, video_duration, fuse_score=self.cfg.act_reg)
 
