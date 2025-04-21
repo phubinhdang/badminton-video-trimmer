@@ -7,17 +7,18 @@ from predicting.rally_predictor import RallyPredictor
 from summary_generator.summary_generator import SummaryGenerator
 from tools.frame_extractor import FrameExtractor
 from tools.youtube_downloader import YoutubeDownloader
-from tools.youtube_downloader import logger
+from configs.opts import cfg
 
-APP_LOGGING_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+APP_LOGGING_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 logging.basicConfig(format=APP_LOGGING_FORMAT, level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.info(f"The app will be run with this configuration: {cfg}")
+
 
 youtube_downloader = YoutubeDownloader()
 frame_extractor = FrameExtractor()
 predictor = RallyPredictor()
 generator = SummaryGenerator()
-
-logger = logging.getLogger(__name__)
 
 
 def trim_video(video_url: str):
