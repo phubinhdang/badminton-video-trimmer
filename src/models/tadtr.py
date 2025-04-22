@@ -69,7 +69,7 @@ class TadTR(nn.Module):
         num_queries,
         aux_loss=True,
         with_segment_refine=True,
-        with_act_reg=False,
+        with_act_reg=True,
     ):
         """Initializes the model.
         Parameters:
