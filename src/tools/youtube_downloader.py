@@ -40,12 +40,12 @@ class YoutubeDownloader:
         try:
             video_file_path = self.download_video(yt, title)
         except Exception as e:
-            logger.error(f"Error while downloading video from {video_url}")
+            logger.error(f"Error while downloading video from {video_url}: {e}")
         if not self.video_only:
             try:
                 audio_file_path = self.download_audio(yt, title)
             except Exception as e:
-                logger.error(f"Error while downloading audio from {video_url}")
+                logger.error(f"Error while downloading audio from {video_url}: {e}")
 
         return VideoInfo(url=video_url,
                          title=title,
@@ -54,7 +54,7 @@ class YoutubeDownloader:
 
     def download_audio(self, yt: YouTube, title: str) -> str:
         try:
-            audio_stream = yt.streams.filter(progressive=True).first()
+            audio_stream = yt.streams.filter(progressive=False, type="audio").first()
             download_path = Path.cwd() / "data" / f"{title}" / "input"
             download_path.mkdir(parents=True, exist_ok=True)
             self.streamlit_tqdm = PersistentSTQDM(total=audio_stream.filesize, unit="B", unit_scale=True,
@@ -72,28 +72,21 @@ class YoutubeDownloader:
         title = re.sub(r'[^A-Za-z0-9\s]', '', title)
         return re.sub(r'\s+', '_', title)
 
-    def download_video(self, yt: YouTube, title, resolution="720p") -> (str, str):
+    def download_video(self, yt: YouTube, title, resolution="1080p") -> str:
         try:
-            # progressive=True mean audio and video in a same stream, but it only available at 360p
-            # so we have to download those separately
-            streams = yt.streams.filter(progressive=False).order_by('resolution').desc()
-            available_resolutions = [s.resolution for s in streams]
-            if resolution in available_resolutions:
-                res = resolution
-            elif not available_resolutions:
-                res = available_resolutions[0]
-            video_stream = yt.streams.filter(resolution=res, progressive=False).first()
+            video_streams = yt.streams.filter(progressive=False, type="video").order_by('resolution').desc()
+            video_stream = video_streams.filter(resolution=resolution).first()
+            if not video_stream: 
+                video_stream = video_streams.first()
+                logger.info(f"Stream of resolution {resolution} not found, download stream of {video_stream.resolution} instead")
             # Create a Streamlit progress bar widget
             download_path = Path.cwd() / "data" / f"{title}" / "input"
             download_path.mkdir(parents=True, exist_ok=True)
-            logger.info(f"Started downloading video with resolution of {res}")
             self.streamlit_tqdm = PersistentSTQDM(total=video_stream.filesize, unit="B", unit_scale=True,
                                                   desc="Downloading VIDEO",
                                                   backend=self.show_progress_in_backend)
             video_file_path = video_stream.download(output_path=str(download_path), filename="video.mp4",
                                                     skip_existing=False)
-            if not video_file_path:
-                raise Exception()
             return video_file_path
         except Exception as e:
             raise e
