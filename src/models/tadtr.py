@@ -39,8 +39,10 @@ from .custom_loss import sigmoid_focal_loss
 from .transformer import build_deformable_transformer
 from configs.opts import cfg
 
-# if not cfg.disable_cuda:
-#     from models.ops.roi_align import ROIAlign
+if not cfg.disable_cuda:
+    pass
+    # FIXME if cuda extension build successful
+    # from models.ops.roi_align import ROIAlign
 
 
 def _get_clones(module, N):
