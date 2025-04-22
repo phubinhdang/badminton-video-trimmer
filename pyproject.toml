@@ -34,18 +34,21 @@ dependencies = [
 [project.optional-dependencies]
 cpu = ["torch==2.4.1", "torchvision==0.19.1"]
 cu121 = ["torch==2.4.1", "torchvision==0.19.1"]
+cu124 = ["torch==2.4.1", "torchvision==0.19.1"]
 
 [tool.uv]
-conflicts = [[{ extra = "cpu" }, { extra = "cu121" }]]
+conflicts = [[{ extra = "cpu" }, { extra = "cu121" },{ extra = "cu124" }]]
 
 [tool.uv.sources]
 torch = [
     { index = "pytorch-cpu", extra = "cpu" },
     { index = "pytorch-cu121", extra = "cu121" },
+    { index = "pytorch-cu124", extra = "cu124" },
 ]
 torchvision = [
     { index = "pytorch-cpu", extra = "cpu" },
     { index = "pytorch-cu121", extra = "cu121" },
+    { index = "pytorch-cu124", extra = "cu124" },
 ]
 
 [[tool.uv.index]]
@@ -56,4 +59,9 @@ explicit = true
 [[tool.uv.index]]
 name = "pytorch-cu121"
 url = "https://download.pytorch.org/whl/cu121"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
 explicit = true
