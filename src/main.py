@@ -24,10 +24,9 @@ generator = SummaryGenerator()
 def trim_video(video_url: str):
     st.sidebar.markdown("### Downloading Video (Step 1/5)")
     video_info = youtube_downloader.download(video_url)
-    logger.info(video_info)
+    logger.info(f"Video info: {video_info}")
     st.sidebar.markdown("### Extracting Frames (Step 2/5)")
     frame_extractor.extract_frames(video_info)
-
     st.sidebar.markdown("### Predicting Rallies (Step 3/5)")
     predictor.predict(video_info)
 
