@@ -23,8 +23,11 @@ logger = logging.getLogger(__name__)
 
 def read_config_and_fix_randomness() -> EasyDict:
     from configs.opts import cfg
-    if cfg.disable_cuda:
-        cfg.act_reg = False
+    # this option control if tadtr.py uses a cuda extension that muss be built beforehand, see the guide at https://github.com/phubinhdang/E2E-TAD-Badminton/blob/master/README.md
+    # though the build results in errors due to old code, see https://github.com/phubinhdang/E2E-TAD-Badminton/blob/master/README.md
+    # Therefore, it is set with False, if you can build the cuda extension successfully, set it back True
+    # do not confuse this option with cfg.with_act_reg in opts.py
+    cfg.act_reg = False
     seed = 42
     torch.manual_seed(seed)
     np.random.seed(seed)
