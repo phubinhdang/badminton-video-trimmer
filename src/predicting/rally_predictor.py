@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import random
 from pathlib import Path
 
@@ -84,7 +85,8 @@ class RallyPredictor:
         model, postprocessors = build_model(cfg)
         model.backbone.backbone.load_pretrained_weight(cfg.pretrained_model)
         model.to(self.cfg.device)
-        checkpoint_path = hf_hub_download(repo_id="phubinhdang/badminton-video-trimmer", filename="model_best.pth")
+        model_file_name = os.getenv("MODEL_FILE_NAME")
+        checkpoint_path = hf_hub_download(repo_id="phubinhdang/badminton-video-trimmer", filename=model_file_name)
         checkpoint = torch.load(checkpoint_path, map_location=self.cfg.device)
         model.load_state_dict(checkpoint["model"], strict=False)
         n_parameters = sum(p.numel() for p in model.parameters())

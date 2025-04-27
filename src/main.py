@@ -1,4 +1,5 @@
 import logging
+import os
 
 import pandas as pd
 import streamlit as st
@@ -29,8 +30,8 @@ def trim_video(video_url: str):
     frame_extractor.extract_frames(video_info)
     st.sidebar.markdown("### Predicting Rallies (Step 3/5)")
     predictor.predict(video_info)
-
-    clips_csv_path = generator.raw_detection_to_clips(video_info, 0.8)
+    score_threshold = float(os.getenv("SCORE_THRESHOLD"))
+    clips_csv_path = generator.raw_detection_to_clips(video_info, score_threshold)
     st.sidebar.markdown("### Extracting predicted rallies (Step 4/5)")
     subclip_paths = generator.extract_subclips(video_info.title, clips_csv_path)
 

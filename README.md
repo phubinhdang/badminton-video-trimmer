@@ -112,6 +112,7 @@ This demo is playing at 2x speed.
 ### Run the streamlit app
 
 ```sh
+cp .env_example .env
 uv run streamlit run src/main.py  
 ```
 
